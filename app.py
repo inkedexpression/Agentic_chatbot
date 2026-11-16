@@ -1,6 +1,6 @@
 # Learning Git: first update
 
-from agentic_chatbot_backend import graph , llm
+from agentic_chatbot_backend import graph , llm , get_all_threads
 from langchain_core.messages import BaseMessage , HumanMessage , AIMessage
 import streamlit as st
 import uuid
@@ -48,7 +48,7 @@ if 'thread_id' not in st.session_state:
     st.session_state['thread_id'] = generate_thread_id()
 
 if 'chat_thread' not in st.session_state:
-    st.session_state['chat_thread'] = []
+    st.session_state['chat_thread'] = get_all_threads()
 
 add_thread(st.session_state['thread_id'])
 
@@ -60,7 +60,7 @@ if "chat_title" not in st.session_state:
 
 # ========================================= side bar ===============================================
 
-st.sidebar.title("KA 19")
+st.sidebar.title("♈︎ AI")
 
 if st.sidebar.button("Start New Chat"):
 
@@ -69,7 +69,7 @@ if st.sidebar.button("Start New Chat"):
 
     # rerun the streamlit interface
     st.rerun()
-    
+
 st.sidebar.write("")
 
 # ========================================= conv history ===============================================
