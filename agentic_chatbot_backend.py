@@ -9,7 +9,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 load_dotenv()
 
 # llm = ChatNVIDIA(model="nvidia/nemotron-3-ultra-550b-a55b")
-llm = ChatNVIDIA(model='mistralai/mistral-large-4-1t-a52b')
+llm = ChatNVIDIA(model='nvidia/nemotron-3.5-bolt-e4b')
 
 
 #chat state -------------------------------------------------------------------------------------
