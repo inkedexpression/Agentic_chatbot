@@ -12,11 +12,11 @@ load_dotenv()
 llm = ChatNVIDIA(model='nvidia/nemotron-3.5-bolt-e4b')
 
 
-#chat state -------------------------------------------------------------------------------------
+#---------------------------------------------------chat state -------------------------------------------------------------------------------------
 class ChatState(TypedDict):
     messages : Annotated[list[BaseMessage],add_messages]
 
-#chat node-------------------------------------------------------------------------------------
+#---------------------------------------------------chat node-------------------------------------------------------------------------------------
 def chat_node(state:ChatState):
 
     message = state['messages']
@@ -25,11 +25,40 @@ def chat_node(state:ChatState):
 
     return {'messages':[response]}
 
-# memory database-------------------------------------------------------------------------------------
+# ---------------------------------memory database-------------------------------------------------------------------------------------
 conn = sqlite3.connect(database="chatbot.db",check_same_thread=False)
+
+# creating a table for conv thread title
+conn.execute("""
+    CREATE TABLE IF NOT EXISTS chat_title(
+    thread_id TEXT PRIMARY KEY,
+    title TEXT NOT NULL)
+""")
+conn.commit()
+
+
+# updating or storeing the title into the table
+
+def save_chat_title(thread_id,title):
+    conn.execute("""
+        INSERT INTO chat_titles (thread_id,title)
+        VALUES(?,?)
+        ON CONFLICT(thread_id) DO UPDATE SET title = excluded.title 
+        """ , (thread_id,title)
+    )
+    conn.commit()
+
+#fetchs all the titles from the table
+def get_all_chat_titles():
+    rows = conn.execute(
+        "SELECT thread_id,title FROM chat_titles"
+    ).fetchall()
+    return dict(rows)
+
+
 checkpointer = SqliteSaver(conn)
 
-#graph-------------------------------------------------------------------------------------
+#--------------------------------------------graph-------------------------------------------------------------------------------------
 builder = StateGraph(ChatState)
 
 builder.add_node('chat_node',chat_node)

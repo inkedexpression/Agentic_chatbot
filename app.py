@@ -1,6 +1,6 @@
 # Learning Git: first update
 
-from agentic_chatbot_backend import graph , llm , get_all_threads
+from agentic_chatbot_backend import graph , llm , get_all_threads , get_all_chat_titles , save_chat_title
 from langchain_core.messages import BaseMessage , HumanMessage , AIMessage
 import streamlit as st
 import uuid
@@ -53,7 +53,7 @@ if 'chat_thread' not in st.session_state:
 add_thread(st.session_state['thread_id'])
 
 if "chat_title" not in st.session_state:
-    st.session_state['chat_title'] = {}
+    st.session_state['chat_title'] = get_all_chat_titles()
 
 
 
@@ -144,7 +144,9 @@ if user_input:
             f"Create a short chat title of 2–5 words for this message. "
             f"Return only the title:\n\n{user_input}")
 
-        st.session_state['chat_title'][thread_id] = response.content.strip()
+        title = response.content.strip()
+        st.session_state['chat_title'][thread_id] = title
+        save_chat_title(thread_id,title)
 
 # =============================== generarting and saving user message and streaming =====================
 
